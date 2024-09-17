@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Accident Data Visualization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Traffic Accident Data Visualization</h1>
+    </header>
+    <main>
+        <section class="gallery">
+            <h2>Visualizations</h2>
+            <h3>Hover for more information!!</h3>
+            <div class="image-grid">
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='top_road_names.png') }}" alt="Top 5 Road Names">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Top 5 Road Names</h3>
+                            <p>This bar chart shows the top 5 road names with the highest number of traffic accidents. The names of the roads are on the vertical axis, and the total count of accidents on the horizontal axis helps identify accident-prone roads.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='crash_trends.png') }}" alt="Monthly Crash Trends">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Monthly Crash Trends</h3>
+                            <p>This line plot illustrates the number of traffic accidents per month over time. The x-axis represents the date, and the y-axis shows the total number of crashes, helping to identify accident trends over the year.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='crash_type_distribution.png') }}" alt="Crash Type Distribution">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Crash Type Distribution</h3>
+                            <p>This bar plot displays the distribution of various crash types. The x-axis lists the crash types, while the y-axis shows the frequency of each type, helping to identify the most common types of crashes in the dataset.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='surface_condition_distribution.png') }}" alt="Surface Condition Distribution">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Surface Condition Distribution</h3>
+                            <p>This bar chart shows the distribution of surface conditions during accidents, like dry, wet, or icy. The chart highlights the frequency of crashes under different surface conditions, helping to understand their impact on accidents.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='weather_conditions.png') }}" alt="Weather Conditions">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Weather Conditions</h3>
+                            <p>This plot displays the frequency of accidents occurring under different weather conditions, such as clear, rainy, or snowy. Understanding weather patterns helps to determine how weather impacts accident rates.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='crash_count_by_route_type.png') }}" alt="Crash Count by Route Type">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Crash Count by Route Type</h3>
+                            <p>This bar chart shows the number of crashes by route type, such as highways or local roads. It helps to identify which types of roads have the most accidents, useful for improving road safety and planning.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamically including bar plots -->
+                {% for i in range(4) %}
+                <div class="image-item flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="{{ url_for('images', filename='barplot_' ~ i ~ '.png') }}" alt="Bar Plot {{ i+1 }}">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Bar Plot {{ i+1 }}</h3>
+                            <p>This bar plot represents the frequency of categories in a specific dataset column. It helps to visualize the distribution of occurrences for different values within the selected column.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if num_images %}
+                {% else %}
+                <p>No images available.</p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Traffic Accident Data Visualization. All rights reserved.</p>
+    </footer>
+</body>
+</html>
