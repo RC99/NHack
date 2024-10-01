@@ -1,17 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Accident Data Visualization</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <header>
-        <h1>Traffic Accident Data Visualization</h1>
+        <nav>
+            <ul>
+                <li><a href="#visualizations">Visualizations</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="/chat">Chatbot</a></li>
+            </ul>
+        </nav>
+        <h1 class="fade-in">Traffic Accident Data Visualization</h1>
     </header>
+
     <main>
-        <section class="gallery">
+        <section id="about" class="fade-in">
+            <h2>About the Data</h2>
+            <p>This dashboard provides insights into traffic accident data. Hover over the images to explore specific statistics on road names, crash types, weather conditions, and more. The visualizations are designed to help identify trends and hotspots to improve road safety.</p>
+        </section>
+        <section id="visualizations" class="gallery">
             <h2>Visualizations</h2>
             <h3>Hover for more information!!</h3>
             <div class="image-grid">
@@ -22,7 +37,7 @@
                         </div>
                         <div class="flip-card-back">
                             <h3>Top 5 Road Names</h3>
-                            <p>This bar chart shows the top 5 road names with the highest number of traffic accidents. The names of the roads are on the vertical axis, and the total count of accidents on the horizontal axis helps identify accident-prone roads.</p>
+                            <p>The bar chart displays the five roads with the highest number of accidents. 'Georgia Ave' appears twice in different sections (likely different segments of the same road), indicating that it is a significant hotspot for accidents, followed by 'New Hampshire Ave' and 'Frederick Ave' with slightly lower accident counts. </p>
                         </div>
                     </div>
                 </div>
@@ -44,7 +59,7 @@
                         </div>
                         <div class="flip-card-back">
                             <h3>Crash Type Distribution</h3>
-                            <p>This bar plot displays the distribution of various crash types. The x-axis lists the crash types, while the y-axis shows the frequency of each type, helping to identify the most common types of crashes in the dataset.</p>
+                            <p>The bar chart categorizes crash types into three categories: Fatal Crashes, Injury Crashes, and Property Damage Only Crashes. The vast majority of incidents fall into the Property Damage Only category, followed by Injury Crashes, while Fatal Crashes occur much less frequently.</p>
                         </div>
                     </div>
                 </div>
@@ -55,7 +70,7 @@
                         </div>
                         <div class="flip-card-back">
                             <h3>Surface Condition Distribution</h3>
-                            <p>This bar chart shows the distribution of surface conditions during accidents, like dry, wet, or icy. The chart highlights the frequency of crashes under different surface conditions, helping to understand their impact on accidents.</p>
+                            <p>This bar chart illustrates the surface conditions at the time of accidents. Dry surfaces account for the majority of accidents, with much fewer incidents occurring under Wet or Other surface conditions, suggesting that most accidents happen in favorable road conditions.</p>
                         </div>
                     </div>
                 </div>
@@ -83,18 +98,19 @@
                 </div>
 
                 <!-- Dynamically including bar plots -->
-                {% for i in range(4) %}
+                {% for i in range(1,3) %}
                 <div class="image-item flip-card">
                     <div class="flip-card-inner">
                         <div class="flip-card-front">
                             <img src="{{ url_for('images', filename='barplot_' ~ i ~ '.png') }}" alt="Bar Plot {{ i+1 }}">
                         </div>
                         <div class="flip-card-back">
-                            <h3>Bar Plot {{ i+1 }}</h3>
+                            <h3>Bar Plot {{ i }}</h3>
                             <p>This bar plot represents the frequency of categories in a specific dataset column. It helps to visualize the distribution of occurrences for different values within the selected column.</p>
                         </div>
                     </div>
                 </div>
+                
                 {% endfor %}
 
                 {% if num_images %}
@@ -102,6 +118,11 @@
                 <p>No images available.</p>
                 {% endif %}
             </div>
+
+        </section>
+        <section id="source" class="fade-in"></section>
+            <h2>Data Source</h2>
+            <p>Data provided by Montgomery County, MD. <a href="https://data.montgomerycountymd.gov/Public-Safety/Crash-Reporting-Incidents-Data/bhju-22kf/about_data" target="_blank">View more</a>.</p>
         </section>
     </main>
     <footer>
