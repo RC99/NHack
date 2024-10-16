@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 client = OpenAI(api_key="")
 
-image_dir = '/Users/reetvikchatterjee/NvidiaHack/images'
+image_dir = 'images'
 
 @app.route('/')
 def index():

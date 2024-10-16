@@ -2,20 +2,24 @@ import cv2
 import torch
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.transforms import functional as F
-import numpy as np
 
-model = fasterrcnn_resnet50_fpn(pretrained=True)
+# Check if a GPU is available and use it if possible
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Load the pre-trained model and move it to the appropriate device
+model = fasterrcnn_resnet50_fpn(pretrained=True).to(device)
 model.eval()
 
-#/Users/reetvikchatterjee/Downloads/accident.mov
-video_path = '/Users/reetvikchatterjee/Downloads/accident.mov'
+video_path = 'trimmed.mov'
 cap = cv2.VideoCapture(video_path)
 
 def transform_image(image):
-    image = F.to_tensor(image)
+    image = F.to_tensor(image).to(device)  # Move tensor to the same device as the model
     return image
 
 car_class_index = 3  
+frame_counter = 0  # Frame counter
+skip_frames = 2    # Process every nth frame
 
 def compute_iou(box1, box2):
     x1, y1, x2, y2 = box1
@@ -27,11 +31,10 @@ def compute_iou(box1, box2):
     yi2 = min(y2, y2_)
 
     inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
-
     box1_area = (x2 - x1) * (y2 - y1)
     box2_area = (x2_ - x1_) * (y2_ - y1_)
 
-    iou = inter_area / float(box1_area + box2_area - inter_area)
+    iou = inter_area / float(box1_area + box2_area - inter_area) if (box1_area + box2_area - inter_area) > 0 else 0
     return iou
 
 while True:
@@ -39,6 +42,13 @@ while True:
     if not ret:
         break
 
+    # Process every nth frame
+    frame_counter += 1
+    if frame_counter % skip_frames != 0:
+        continue
+
+    # Resize frame for faster processing
+    frame = cv2.resize(frame, (640, 480))  # Adjust size as needed
     image_tensor = transform_image(frame)
 
     with torch.no_grad():
@@ -58,7 +68,7 @@ while True:
         for j, box2 in enumerate(car_boxes):
             if i != j:  
                 iou = compute_iou(box1, box2)
-                if iou > 0.05:  
+                if iou > 0.30:  
                     print(f"Overlap detected between boxes: {box1} and {box2} with IoU: {iou:.2f}")
 
     for box, label, score in zip(boxes, labels, scores):
