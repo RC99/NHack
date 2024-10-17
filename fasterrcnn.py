@@ -2,6 +2,69 @@ import cv2
 import torch
 from torchvision.models.detection import fasterrcnn_resnet50_fpn
 from torchvision.transforms import functional as F
+import time
+import requests
+import smtplib
+from email.mime.text import MIMEText
+
+time_last_alert = 0  
+alert_interval = 15 * 60  
+
+def send_location_alert(sender_email, sender_password, receiver_email, receiver_phone_number):
+    # Get the public IP address
+    public_ip_response = requests.get('https://api.ipify.org?format=json')
+    public_ip = public_ip_response.json()['ip']
+
+    # Use a geolocation API to get the location of the public IP
+    location_response = requests.get(f'http://ip-api.com/json/{public_ip}')
+    location_data = location_response.json()
+
+    if location_data['status'] == 'success':
+        lat = location_data['lat']
+        lon = location_data['lon']
+        
+        print(f"Latitude: {lat}, Longitude: {lon}")
+
+        # Check latitude and longitude conditions
+        if 30 < lat < 35 and -119 < lon < -118:
+            # Send a normal email notification
+            email_msg = MIMEText("Alert: Your specified condition has been met.")
+            email_msg["Subject"] = "Location Alert"
+            email_msg["From"] = sender_email
+            email_msg["To"] = receiver_email
+
+            # Send the email
+            try:
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, receiver_email, email_msg.as_string())
+                print("Email notification sent!")
+            except Exception as e:
+                print(f"Error sending email: {e}")
+
+            # Send an SMS via email
+            sms_receiver_number = f"{receiver_phone_number}"  # Adjust for the recipient's Google Fi number
+            
+            # Create the SMS content
+            sms_msg = MIMEText("This is a normal SMS alert.")
+            sms_msg["Subject"] = "SMS Alert"
+            sms_msg["From"] = sender_email
+            sms_msg["To"] = sms_receiver_number
+
+            # Send the SMS
+            try:
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, sms_receiver_number, sms_msg.as_string())
+                print("SMS sent successfully!")
+            except Exception as e:
+                print(f"Error sending SMS: {e}")
+        else:
+            print("Location is outside the specified range.")
+    else:
+        print("Could not get location data.")
 
 # Check if a GPU is available and use it if possible
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -70,6 +133,13 @@ while True:
                 iou = compute_iou(box1, box2)
                 if iou > 0.30:  
                     print(f"Overlap detected between boxes: {box1} and {box2} with IoU: {iou:.2f}")
+                    current_time = time.time()
+
+                    # Send alert if it's been more than 15 minutes since the last alert
+                    if current_time - time_last_alert > alert_interval:
+                        send_location_alert("your_email@gmail.com", "app password", "email@email.com", "your_number@msg.fi.google.com")
+                        time_last_alert = current_time
+
 
     for box, label, score in zip(boxes, labels, scores):
         if label == car_class_index and score > 0.85:  
