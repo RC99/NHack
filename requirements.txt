@@ -11,4 +11,4 @@ pandas
 requests
 seaborn
 matplotlib
-BeautifulSoup
+beautifulsoup4
